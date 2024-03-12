@@ -34,7 +34,6 @@ fetchData();
 
 function setData(data) {
 	const parentDiv = document.getElementById("json");
-	const lengthInfo = document.getElementById("h3");
 	parentDiv.innerHTML = "";
 	const list = document.createElement("ol");
 	list.setAttribute("id", "paginated-list");
