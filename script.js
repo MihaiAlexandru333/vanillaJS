@@ -53,12 +53,29 @@ function setData(data) {
 
 const source = document.getElementById("search");
 const submitBtn = document.getElementById("submit");
+const searchResultsParent = document.getElementById("search-results");
+searchResultsParent.innerHTML = "";
 
 //as the user types
 const inputHandeler = (e) => {
 	let inputValue = "";
 	inputValue = e.target.value;
-	console.log(inputValue);
+	searchResultsParent.innerHTML = "";
+	let searchedData = jsonData.filter((item) => {
+		return item.title.includes(inputValue);
+	});
+	searchedData.forEach((searchedItem) => {
+		const searchResultParagraph = document.createElement("p");
+		searchResultParagraph.innerText =
+			searchedItem.title +
+			" --> " +
+			(searchedItem.completed ? "completed" : "not completed");
+		searchResultsParent.appendChild(searchResultParagraph);
+	});
+
+	if (inputValue === "") searchResultsParent.innerHTML = "";
+
+	console.log(searchedData);
 };
 
 //when the user clicks the button
