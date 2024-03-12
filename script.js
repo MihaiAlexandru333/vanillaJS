@@ -1,8 +1,10 @@
 /* Display data */
 let jsonData = [];
+let allData = [];
 const prevButton = document.getElementById("prev-button");
 const nextButton = document.getElementById("next-button");
-let page = 0;
+const pageNumber = document.getElementById("pagination-numbers");
+let page = 1;
 let pageSize = 20;
 let start = 0;
 let limit = 20;
@@ -11,14 +13,22 @@ let totalPages = 0;
 prevButton.addEventListener("click", prevHandler);
 nextButton.addEventListener("click", nextHandler);
 
+async function initialFetch() {
+	const response = await fetch(`https://jsonplaceholder.typicode.com/todos/`);
+	const data = await response.json();
+	allData = data;
+}
+initialFetch();
+
 async function fetchData() {
 	const response = await fetch(
 		`https://jsonplaceholder.typicode.com/todos?_start=${start}&_limit=${limit}`
 	);
 	const data = await response.json();
 	jsonData = data;
-	totalPages = Math.ceil(jsonData.length / pageSize);
 	setData(data);
+	totalPages = Math.ceil(allData.length / pageSize);
+	pageNumber.innerHTML = `Page ${page} of ${totalPages}`;
 }
 fetchData();
 
@@ -37,7 +47,6 @@ function setData(data) {
 			(element.completed ? "completed" : "not completed");
 		list.appendChild(listItem);
 	});
-	lengthInfo.innerText = `Displaying ${data.length} elements`;
 }
 
 /* Search functionality */
@@ -67,22 +76,22 @@ const submitHandeler = (e) => {
 source.addEventListener("input", inputHandeler);
 submitBtn.addEventListener("click", submitHandeler);
 
-//TODO:
-/* search simplu si peurma search cu paginatie - si paginatie cu query */
-
-/* pagination  */
-console.log(totalPages);
+/* pagination query */
+if (page === 1) prevButton.setAttribute("disabled", true);
 
 function nextHandler() {
-	if (page === totalPages) return;
 	page++;
-	start += limit + 1;
+	start += limit;
+	if (page === totalPages) nextButton.setAttribute("disabled", true);
+	if (page > 1) prevButton.removeAttribute("disabled");
 	fetchData();
 }
 
 function prevHandler() {
-	if (page === 0) return;
 	page--;
-	start -= limit - 1;
+	start -= limit;
+	if (page === 1) prevButton.setAttribute("disabled", true);
+	if (nextButton.hasAttribute("disabled"))
+		nextButton.removeAttribute("disabled");
 	fetchData();
 }
