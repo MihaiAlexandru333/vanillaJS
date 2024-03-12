@@ -9,16 +9,20 @@ let pageSize = 20;
 let start = 0;
 let limit = 20;
 let totalPages = 0;
+let searchedData = [];
+let searchedValue = "";
 
 prevButton.addEventListener("click", prevHandler);
 nextButton.addEventListener("click", nextHandler);
 
-async function initialFetch() {
-	const response = await fetch(`https://jsonplaceholder.typicode.com/todos/`);
+async function initialFetch(searchValue) {
+	const response = await fetch(
+		`https://jsonplaceholder.typicode.com/todos?title_like=${searchValue}`
+	);
 	const data = await response.json();
 	allData = data;
+	console.log("params", data);
 }
-initialFetch();
 
 async function fetchData() {
 	const response = await fetch(
@@ -58,13 +62,10 @@ searchResultsParent.innerHTML = "";
 
 //as the user types
 const inputHandeler = (e) => {
-	let inputValue = "";
 	inputValue = e.target.value;
 	searchResultsParent.innerHTML = "";
-	let searchedData = jsonData.filter((item) => {
-		return item.title.includes(inputValue);
-	});
-	searchedData.forEach((searchedItem) => {
+	initialFetch(inputValue);
+	allData.forEach((searchedItem) => {
 		const searchResultParagraph = document.createElement("p");
 		searchResultParagraph.innerText =
 			searchedItem.title +
